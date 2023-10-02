@@ -24,23 +24,3 @@ Deux arrivées d'alim en 1.400A
     2 PWM
     2 GND
 ]
-
-### Manette
-
-#### Phares
-
-1 Bouton
-
-[
-    # Articulation phares
-    2 Boutons
-]
-
-#### Haut-parleur
-
-1 Bouton
-
-[
-    # Echelle
-    Joystick
-]
