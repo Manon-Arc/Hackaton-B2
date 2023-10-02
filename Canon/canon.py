@@ -1,4 +1,5 @@
 from machine import Pin
+from time import sleep
 
 motor1_step = Pin(0, Pin.OUT)  # TODO: Change to correct pin
 motor1_dir = Pin(1, Pin.OUT)  # TODO: Change to correct pin
@@ -23,4 +24,6 @@ def move_motor(motor, steps, direction):
     dir_pin.value(direction)
     for i in range(steps):
         step_pin.value(1)
+        sleep(0.001)
         step_pin.value(0)
+        sleep(0.001)
