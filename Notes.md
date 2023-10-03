@@ -24,7 +24,9 @@ Pièce 3D décorative
 
 Haut-parleur
 
-Détection de la pièce
+[
+    Détection de la pièce
+]
 
 (Bouton de diffusion)
 
