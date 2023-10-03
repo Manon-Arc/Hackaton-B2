@@ -1,5 +1,10 @@
 Utiliser ESPNOW
 
+Pour permettre l'import du module ESPNOW nous avons besoin du firmware :
+**https://github.com/glenn20/micropython-espnow-images/tree/main/20230427-v1.20.0-espnow-2-gcc4c716f6**
+
+(Le **firmware-esp32-GENERIC.bin** fonctionne très bien)
+
 Connection depuis une ESP Tiers :
 
 On initie ESPNOW pour on envoie une requête de connection à l'ESP principale possédant l'adresse mac **"\$MAC_ADRESSE$"**
