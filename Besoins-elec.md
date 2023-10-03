@@ -31,5 +31,6 @@
 
 # TOTAL
 
+> Arrivée alim
 > 2 PWM
 > 3 GND
