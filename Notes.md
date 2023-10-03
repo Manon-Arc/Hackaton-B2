@@ -13,14 +13,14 @@ Pièce simplifiant le montage/démontage rapide + connexion fils (servo moteur d
 
 Échelle imprimée en 3D
 
-(Joystick + 2 boutons)
+> Joystick + 2 boutons
 
 ]
 
 
     Haut-parleur (Diffusion de messages, morse)
 
-Pièce 3D décorative
+Pièce 3D
 
 Haut-parleur
 
@@ -28,21 +28,24 @@ Haut-parleur
     Détection de la pièce
 ]
 
-(Bouton de diffusion)
+>Bouton
 
 
 
     Phares (Interventions de nuits, amélioration de la visibilité)
 
-LED haute puissance
+LEDs
 
-Pièce 3D de maintient
+Pièce 3D
 
 Branchement rapide
 
-[Possibilité de modifier l’inclinaison]
+[
+    Possibilité de modifier l’inclinaison
+]
 
-(Bouton)
+> Bouton
+
 ```
 
 
@@ -52,8 +55,6 @@ Branchement rapide
     Haut-parleur
 
 Émission du son cohérente
-
-Détection de pièce 3D _> capteur fin de course, en douceur
 
 
 [

@@ -4,25 +4,26 @@
 ### Base roulante
 
 #### Phares
-2 GPIO (LEDs, [1 capteur fin de course]) _> 1 mini
-[1 PWM]
-2 GND + [1 GND]
+1 GPIO
+1 GND
 [
-    Deux arrivées d'alim en 1.400A
+    Arrivée d'alim en 1.400A
+    1 GND
+]
+
+[
+    # Articulation feu
+    1 PWM
+    1 GND
 ]
 
 #### Haut-parleur
 1 PWM
+[1 GPIO, capteur fin de course]
 1 GND
 
+#### Echelle
 [
-    # Articulation feux
-    2 PWM
-    2 GND
-]
-
-[
-    # Echelle
     2 PWM
     2 GND
 ]
@@ -30,5 +31,5 @@
 
 # TOTAL
 
-> 3 PWM
+> 2 PWM
 > 3 GND
