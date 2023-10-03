@@ -1,16 +1,16 @@
 import time
 import machine
 
-broche_sortie = machine.Pin(4, machine.Pin.OUT)
+broche_sortie = machine.Pin(13, machine.Pin.OUT)
 pwm = machine.PWM(broche_sortie)
 
 
 # Settings of short and long calls
 
-short = 0.3 # Short, is egal to silence
+short = 0.3  # is egal to silence
 long = 0.75
 
-# Set spreader
+#Set spreader
 
 pwm.duty(0)
 time.sleep(short)
