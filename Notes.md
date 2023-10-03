@@ -9,7 +9,7 @@
 
 Servo moteur dans le robot
 
-Pièce simplifiant le montage/démontage rapide + connexion fils (servo moteur de levé lié à l’échelle (pièce 3D de dissimulation)
+Pièce simplifiant le montage/démontage rapide + connexion fils (servo moteur de levé lié à l’échelle (pièce 3D de dissimulation))
 
 Échelle imprimée en 3D
 
