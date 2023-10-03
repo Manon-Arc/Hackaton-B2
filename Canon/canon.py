@@ -1,10 +1,12 @@
 from machine import Pin
 from time import sleep
 
-motor1_step = Pin(27, Pin.OUT)  # TODO: Change to correct pin
-motor1_dir = Pin(26, Pin.OUT)  # TODO: Change to correct pin
+# motor1_step = Pin(27, Pin.OUT)  # TODO: Change to correct pin
+# motor1_dir = Pin(26, Pin.OUT)  # TODO: Change to correct pin
 # motor2_step = Pin(2, Pin.OUT)  # TODO: Change to correct pin
 # motor2_dir = Pin(3, Pin.OUT)  # TODO: Change to correct pin
+Canon1 = Pin(16, Pin.OUT)  # TODO: Change to correct pin
+Canon2 = Pin(17, Pin.OUT)  # TODO: Change to correct pin
 
 
 def angle_to_steps(angle):
@@ -29,3 +31,11 @@ def move_motor(motor, steps, direction):
         sleep(0.001)
         step_pin.value(0)
         sleep(0.001)
+
+
+def canon():
+    if Canon1.value() == 0:
+        Canon1.value(1)
+    else:
+        Canon1.value(0)
+
