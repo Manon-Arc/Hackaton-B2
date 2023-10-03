@@ -5,8 +5,8 @@
 
 #### Phares
 2 GPIO (LEDs, [1 capteur fin de course]) _> 1 mini
-1 PWM
-3 GND
+[1 PWM]
+2 GND + [1 GND]
 Deux arrivées d'alim en 1.400A
 
 #### Haut-parleur
