@@ -1,5 +1,4 @@
 from machine import Pin
-import time
 motor = Pin(16, Pin.OUT)
 
 def launch_plot():
