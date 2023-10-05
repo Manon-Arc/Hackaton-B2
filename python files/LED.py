@@ -2,7 +2,6 @@ from machine import Pin
 import espnow
 import network
 
-
 def main():
     e = espnow.ESPNow()
     e.active(True)
