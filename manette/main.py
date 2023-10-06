@@ -2,6 +2,7 @@ import time
 import espnow
 from machine import Pin, ADC
 import network
+import _thread
 
 # @"\xd8\xea\xd5\x10
 
@@ -34,8 +35,84 @@ PIN_BTN_PLOT = Pin(26, Pin.IN, Pin.PULL_UP)
 COMMUNICATION = espnow.ESPNow()
 COMMUNICATION.active(True)
 
-centerX = (1965,1995)
-centerY = (1830,1855)
+def JoystickInput(i):
+    centerX = (1965, 1995)
+    centerY = (1830, 1855)
+    while True:
+        A = False
+        R = False
+        G = False
+        D = False
+
+        xValue = JOYSTICK_X.read()
+        yValue = JOYSTICK_Y.read()
+
+        if (xValue > centerX[1]):
+            A = True
+        if (yValue > centerY[1]):
+            D = True
+        if (yValue < centerY[0]):
+            G = True
+        if (xValue < centerX[0]):
+            R = True
+
+        if A:
+            if D:
+                COMMUNICATION.send(peer, "DD", True)
+
+            elif G:
+                COMMUNICATION.send(peer, "DG", True)
+
+            else:
+                COMMUNICATION.send(peer, "A", True)
+
+        elif R:
+            if D:
+                COMMUNICATION.send(peer, "DBD", True)
+
+            elif G:
+                COMMUNICATION.send(peer, "DBG", True)
+
+            else:
+                COMMUNICATION.send(peer, "R", True)
+
+        elif D:
+            COMMUNICATION.send(peer, "TD", True)
+
+        elif G:
+            COMMUNICATION.send(peer, "TG", True)
+
+        else:
+            COMMUNICATION.send(peer, "STOP", True)
+                
+
+        time.sleep(0.1)
+
+def HauteurCanonInput(i):
+    while True:
+        if not PIN_BTN_CANON_UP.value():
+            print("canon up")
+            COMMUNICATION.send(peer, "UP", True)
+
+
+        if not PIN_BTN_CANON_DOWN.value():
+            print("Canon down")
+            COMMUNICATION.send(peer, "DOWN", True)
+        time.sleep(0.1)
+
+def RotationBaseInput(i):
+    while True:
+        if not PIN_BTN_ROTATION_GAUCHE.value():
+            print("rotation gauche")
+            COMMUNICATION.send(peer, "RG", True)
+
+
+        if not PIN_BTN_ROTATION_DROITE.value():
+            print("rotation droite")
+            COMMUNICATION.send(peer, "RD", True)
+
+        time.sleep(0.1)
+
 
 wlan_sta = network.WLAN(network.STA_IF)
 wlan_sta.active(True)
@@ -44,11 +121,15 @@ print(wlan_mac)
 
 host, msg = COMMUNICATION.recv()
 if msg == b'PLEASE':  # msg == None if timeout in recv()
-    print(host, msg)
-    peer = host
-    COMMUNICATION.add_peer(peer)
-    COMMUNICATION.send(peer, "CONNECTED", True)
-    
+   print(host, msg)
+   peer = host
+   COMMUNICATION.add_peer(peer)
+   COMMUNICATION.send(peer, "CONNECTED", True)
+
+_thread.start_new_thread(JoystickInput,(1,))
+_thread.start_new_thread(HauteurCanonInput,(1,))
+_thread.start_new_thread(RotationBaseInput,(1,))
+
 while True:
     if not PIN_BTN_ACCESSOIRE.value():
         print("btn sos")
@@ -56,71 +137,19 @@ while True:
 
     if not PIN_INTERRUPT_GIRO2.value():
         print("Giro On")
-
-    if not PIN_BTN_ROTATION_GAUCHE.value():
-        print("rotation gauche")
-        COMMUNICATION.send(peer, "RG", True)
-
-
-    if not PIN_BTN_ROTATION_DROITE.value():
-        print("rotation droite")
-        COMMUNICATION.send(peer, "RD", True)
-
-    if not PIN_BTN_CANON_UP.value():
-        print("canon up")
-        COMMUNICATION.send(peer, "UP", True)
-
-
-    if not PIN_BTN_CANON_DOWN.value():
-        print("Canon down")
-        COMMUNICATION.send(peer, "DOWN", True)
+        COMMUNICATION.send(peer, "GIRO ON", True)
+    else:
+        COMMUNICATION.send(peer, "GIRO OFF", True)
+        print("off")
+    time.sleep(0.1)
 
     if not PIN_BTN_CANON_TIR.value():
         print("tir")
         COMMUNICATION.send(peer, "TIR", True)
-
+    else:
+        COMMUNICATION.send(peer, "STOP TIR", True)
+        pass
 
     if not PIN_BTN_PLOT.value():
         print("plot")
         COMMUNICATION.send(peer, "PLOT", True)
-    
-
-    A = False
-    R = False
-    G = False
-    D = False
-
-    xValue = JOYSTICK_X.read()
-    yValue = JOYSTICK_Y.read()
-
-    if(xValue > centerX[1]):
-        A = True
-    if(yValue > 1855):
-        D = True
-    if(yValue < 1830):
-        G = True
-    if(xValue < 1965):
-        R = True
-
-    if A:
-        if D:
-            COMMUNICATION.send(peer, "DD", True)
-        elif G:
-            COMMUNICATION.send(peer, "DG", True)
-        else:
-            COMMUNICATION.send(peer, "A", True)
-    elif R:
-        if D:
-            COMMUNICATION.send(peer, "DBD", True)
-        elif G:
-            COMMUNICATION.send(peer, "DBG", True)
-        else:
-            COMMUNICATION.send(peer, "R", True)
-    elif D:
-        COMMUNICATION.send(peer, "TD", True)
-    elif G:
-        COMMUNICATION.send(peer, "TG", True)
-    else:
-        COMMUNICATION.send(peer, "STOP", True)
-
-    time.sleep(0.1)
