@@ -9,15 +9,17 @@ import _thread
 LAST_DIR = "STOP"
 GYRO_STATUS = "OFF"
 
+GYRO_IS_CLICK = False
+
 peer=""
 
 IS_CONNECT = False
 
-PIN_BTN_ACCESSOIRE = Pin(16, Pin.IN, Pin.PULL_UP)
+#PIN_BTN_ACCESSOIRE = Pin(16, Pin.IN, Pin.PULL_UP)
 
-PIN_INTERRUPT_GIRO = Pin(19, Pin.OUT, value=1)
-PIN_INTERRUPT_GIRO2 = Pin(17, Pin.IN, value=0)
-PIN_INTERRUPT_GIRO2.value(0)
+PIN_INTERRUPT_GIRO = Pin(19, Pin.IN, Pin.PULL_UP)
+#PIN_INTERRUPT_GIRO2 = Pin(17, Pin.IN, value=0)
+#PIN_INTERRUPT_GIRO2.value(0)
 
 JOYSTICK_X = ADC(Pin(35))
 JOYSTICK_Y = ADC(Pin(34))
@@ -31,8 +33,8 @@ PIN_BTN_ROTATION_DROITE = Pin(13, Pin.IN, Pin.PULL_UP)
 PIN_BTN_CANON_UP = Pin(27, Pin.IN, Pin.PULL_UP)
 PIN_BTN_CANON_DOWN = Pin(14, Pin.IN, Pin.PULL_UP)
 
-PIN_BTN_CANON_TIR = Pin(23, Pin.IN, Pin.PULL_UP)
-PIN_BTN_PLOT = Pin(26, Pin.IN, Pin.PULL_UP)
+#PIN_BTN_CANON_TIR = Pin(23, Pin.IN, Pin.PULL_UP)
+#PIN_BTN_PLOT = Pin(26, Pin.IN, Pin.PULL_UP)
 
 COMMUNICATION = espnow.ESPNow()
 COMMUNICATION.active(True)
@@ -67,8 +69,8 @@ while not IS_CONNECT:
     pass
 
 while True:
-    centerX = (1880, 1990)
-    centerY = (1830, 1940)
+    centerX = (1900, 1975)
+    centerY = (1850, 1925)
 
     A = False
     R = False
@@ -76,14 +78,15 @@ while True:
     D = False
     yValue = JOYSTICK_X.read()
     xValue = JOYSTICK_Y.read()
+    #print("x:" + str(xValue) + "    y:" + str(yValue))
 
-    if (xValue > centerX[1]):
-        R = True
-    if (yValue > centerY[1]):
-        D = True
-    if (yValue < centerY[0]):
-        G = True
     if (xValue < centerX[0]):
+        R = True
+    if (yValue < centerY[0]):
+        D = True
+    if (yValue > centerY[1]):
+        G = True
+    if (xValue > centerX[1]):
         A = True
 
     if A:
@@ -146,16 +149,20 @@ while True:
     #    print("btn sos")
     #    COMMUNICATION.send(peer, "SOS", True)
 
-    if PIN_INTERRUPT_GIRO2.value():
-        if GYRO_STATUS != "ON":
-            COMMUNICATION.send(peer, "GIRO ON", True)
-            GYRO_STATUS = "ON"
-            print("GYRO ON")
+    if PIN_INTERRUPT_GIRO.value():
+        if not GYRO_IS_CLICK:
+            GYRO_IS_CLICK = True
+            if GYRO_STATUS != "ON":
+                COMMUNICATION.send(peer, "GIRO ON", True)
+                GYRO_STATUS = "ON"
+                print("GYRO ON")
+            else:
+                COMMUNICATION.send(peer, "GIRO OFF", True)
+                GYRO_STATUS = "OFF"
+                print("GYRO OFF  ")
     else:
-        if GYRO_STATUS != "OFF":
-            COMMUNICATION.send(peer, "GIRO OFF", True)
-            GYRO_STATUS = "OFF"
-            print("GYRO OFF  ")
+        GYRO_IS_CLICK = False
+
 
     # if not PIN_BTN_CANON_TIR.value():
     #    print("tir")
@@ -168,12 +175,12 @@ while True:
     #    kill = True
     #    COMMUNICATION.send(peer, "PLOT", True)
 
-    # if not PIN_BTN_CANON_UP.value():
-    #    print("canon up")
-    #    COMMUNICATION.send(peer, "UP", True)
-    # if not PIN_BTN_CANON_DOWN.value():
-    #    print("Canon down")
-    #    COMMUNICATION.send(peer, "DOWN", True)
+    if not PIN_BTN_CANON_UP.value():
+        print("canon up")
+        COMMUNICATION.send(peer, "UP", True)
+    if not PIN_BTN_CANON_DOWN.value():
+        print("Canon down")
+        COMMUNICATION.send(peer, "DOWN", True)
 
     if not PIN_BTN_ROTATION_GAUCHE.value():
         print("rotation gauche")
