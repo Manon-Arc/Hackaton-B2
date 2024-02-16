@@ -87,10 +87,91 @@ def a_wait_connection():
 def main():
     global IS_CONNECT, GYRO_IS_CLICK, GYRO_STATUS, LAST_CANON_MOUVEMENT
     a_wait_connection()
+    
+    LAST_DIR = "STOP"
 
-    _thread.start_new_thread(t_joystick, (0,))
+    #_thread.start_new_thread(t_joystick, (0,))
 
     while IS_CONNECT:
+        centerX = (1900, 1975)
+        centerY = (1850, 1925)
+
+        A = False
+        R = False
+        G = False
+        D = False
+        yValue = JOYSTICK_X.read()
+        xValue = JOYSTICK_Y.read()
+        #print("x:" + str(xValue) + "    y:" + str(yValue))
+
+        if (xValue < centerX[0]):
+            R = True
+        if (yValue < centerY[0]):
+            D = True
+        if (yValue > centerY[1]):
+            G = True
+        if (xValue > centerX[1]):
+            A = True
+
+        if A:
+            if D:
+                if LAST_DIR != "DAD":
+                    COMMUNICATION.send(peer, "DAD", True)
+                    print("DD")
+                    LAST_DIR = "DAD"
+
+            elif G:
+                if LAST_DIR != "DAG":
+                    COMMUNICATION.send(peer, "DAG", True)
+                    print("DG")
+                    LAST_DIR = "DAG"
+
+            else:
+                if LAST_DIR != "A":
+                    COMMUNICATION.send(peer, "A", True)
+                    print("A")
+                    LAST_DIR = "A"
+
+        elif R:
+            if D:
+                if LAST_DIR != "DBD":
+                    COMMUNICATION.send(peer, "DBD", True)
+                    print("DBD")
+                    LAST_DIR = "DBD"
+
+            elif G:
+                if LAST_DIR != "DBG":
+                    COMMUNICATION.send(peer, "DBG", True)
+                    print("DBG")
+                    LAST_DIR = "DBG"
+
+            else:
+                if LAST_DIR != "R":
+                    COMMUNICATION.send(peer, "R", True)
+                    print("R")
+                    LAST_DIR = "R"
+
+        elif D:
+            if LAST_DIR != "TD":
+                COMMUNICATION.send(peer, "TD", True)
+                print("TD")
+                LAST_DIR = "TD"
+
+        elif G:
+            if LAST_DIR != "TG":
+                COMMUNICATION.send(peer, "TG", True)
+                print("TG")
+                LAST_DIR = "TG"
+
+        else:
+            if LAST_DIR != "STOP":
+                COMMUNICATION.send(peer, "STOP", True)
+                LAST_DIR = "STOP"
+                print("STOP")
+        
+        
+        
+        
         if PIN_INTERRUPT_GIRO.value():
             if not GYRO_IS_CLICK:
                 GYRO_IS_CLICK = True
@@ -112,7 +193,7 @@ def main():
                 COMMUNICATION.send(peer, "UP Start", True)
                 LAST_CANON_MOUVEMENT = "UP"
         else:
-            if LAST_CANON_MOUVEMENT != "STOP":
+            if LAST_CANON_MOUVEMENT != "STOP" and LAST_CANON_MOUVEMENT != "DOWN":
                 print("canon up stop")
                 COMMUNICATION.send(peer, "UP Stop", True)
                 LAST_CANON_MOUVEMENT = "STOP"
@@ -123,7 +204,7 @@ def main():
                 COMMUNICATION.send(peer, "DOWN Start", True)
                 LAST_CANON_MOUVEMENT = "DOWN"
         else:
-            if LAST_CANON_MOUVEMENT != "STOP":
+            if LAST_CANON_MOUVEMENT != "STOP" and LAST_CANON_MOUVEMENT != "UP":
                 print("canon down stop")
                 COMMUNICATION.send(peer, "DOWN Stop", True)
                 LAST_CANON_MOUVEMENT = "STOP"
@@ -135,6 +216,7 @@ def main():
         if not PIN_BTN_ROTATION_DROITE.value():
             print("rotation droite")
             COMMUNICATION.send(peer, "RD", True)
+        
 
         time.sleep(0.3)
 
