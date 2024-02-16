@@ -12,7 +12,7 @@ III. [Project description](#📋-project-description)
 
 IV. [Availables Features](#🌟-availables-features)
 
-V. [Usage](#🔧-usage)
+V. [Model](#🔧-model)
 
 ## 🎯 Badges
 
@@ -35,18 +35,15 @@ Marcus is a prototype firefighter robot
 
 ## 🌟 Availables features 
 
+**Wireless Control :** Operated via a controller connected through ESP-Now, boasting a range of 150m under ideal conditions.
 
-- **Mecanum movement :** Equipé de roues mécanome, Marcus a la possibilité de se déplacer dans 8 directions différentes.
+**Mecanum Movement :** Capable of moving in eight different directions, facilitated by its omnidirectional Mecanum wheels.
 
-- **Wireless control :** The controller allows you to control the movement and actions of the robot using the ESP Now protocol jusqu'à 200m.
+**Blue Rotating Beacon :** Installed to indicate emergency interventions.
 
-- **Blue rotating beacon :** Pour se faire repérer par les personnes environnante, Marcus est équipé d'un girophare lumineux rotatif.
+**Water Cannon :** Provides a 45° range of movement in height for enhanced flexibility.
 
+**Mounting Location :** Designed for the addition of accessories such as a headlight or megaphone.
 
-## 🔧 Usage
-
-- **Start Remote :**
-
-- **Start Base roulante :**
-
-- **Move :**
+## 🔧 Model:
+[Rolling base](https://a360.co/3RRdXBM)
