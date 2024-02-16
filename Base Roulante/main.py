@@ -14,6 +14,8 @@ WHEEL_SPEED = 50
 IS_GIRO_ON = False
 IS_CANON_SHOOTING = False
 IS_PHARE_ON = False
+IS_CANON_UPING = False
+IS_CANON_DOWNING = False
 
 # Variable de liaisons machine
 GYROPHARE_MOTOR = machine.PWM(machine.Pin(25), freq=50)
@@ -25,6 +27,12 @@ ROUE_AVANT_GAUCHE = (machine.PWM(machine.Pin(17), freq=50), machine.PWM(machine.
 ROUE_AVANT_DROIT = (machine.PWM(machine.Pin(4), freq=50), machine.PWM(machine.Pin(16), freq=50))
 ROUE_ARRIERE_GAUCHE = (machine.PWM(machine.Pin(18), freq=50), machine.PWM(machine.Pin(19), freq=50))
 ROUE_ARRIERE_DROIT = (machine.PWM(machine.Pin(2), freq=50), machine.PWM(machine.Pin(0), freq=50))
+
+
+
+#              --------------------         Recheck
+step_pin = Pin(23, Pin.OUT)
+dir_pin = Pin(22, Pin.OUT)
 
 PHARE = machine.Pin(13, mode=machine.Pin.OUT)
 
@@ -43,13 +51,11 @@ e.active(True)
 
 
 def main():
-    global CURRENT_MOVEMENT
-    global IS_GIRO_ON
-    global IS_CANON_SHOOTING
-    global IS_PHARE_ON
+    global CURRENT_MOVEMENT, IS_GIRO_ON, IS_CANON_SHOOTING, IS_PHARE_ON, IS_CANON_UPING, IS_CANON_DOWNING
 
     _thread.start_new_thread(t_deplacements, (0,))
     _thread.start_new_thread(t_giro, (0,))
+    _thread.start_new_thread(t_canon, (0,))
 
 
     try:
@@ -87,6 +93,20 @@ def main():
             IS_GIRO_ON = False
         elif msg == b'GIRO ON':
             IS_GIRO_ON = True
+
+        elif msg == b'UP Start':
+            IS_CANON_DOWNING = False
+            IS_CANON_UPING = True
+        elif msg == b'UP Stop':
+            IS_CANON_UPING = False
+        elif msg == b'DOWN Start':
+            IS_CANON_UPING = False
+            IS_CANON_DOWNING = True
+        elif msg == b'DOWN Stop':
+            IS_CANON_DOWNING = False
+
+
+
         elif msg == b'TIR':
             IS_CANON_SHOOTING = True
         elif msg == b'STOP TIR':
@@ -97,7 +117,7 @@ def main():
             IS_PHARE_ON = False
 
         else:
-            print("test")
+            pass
 
 
 
@@ -154,12 +174,35 @@ def t_deplacements(i):
         else:
             arret()
 
+
+def angle_to_steps(angle):
+    max_angle = 0
+    min_angle = 0
+    if angle < 0 or angle > 360:
+        raise ValueError("Angle must be between 0 and 360 degrees")
+    print(angle)
+    return int(angle * 200 / 360)
+
+
+def move_motor(steps, direction):
+    dir_pin.value(direction)
+    for i in range(steps):
+        step_pin.value(1)
+        sleep(0.001)
+        step_pin.value(0)
+        sleep(0.001)
+
+
 def t_canon(i):
     while True:
-        if IS_CANON_SHOOTING:
-            CANON.value(1)
-        else:
-            CANON.value(0)
+        #if IS_CANON_SHOOTING:
+        #    CANON.value(1)
+        #else:
+        #    CANON.value(0)
+        if IS_CANON_UPING:
+            move_motor(angle_to_steps(1), True)
+        elif IS_CANON_DOWNING:
+            move_motor(angle_to_steps(1), False)
 
 def t_phare(i):
     while True:
