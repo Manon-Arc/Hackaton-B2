@@ -3,10 +3,12 @@ import network
 import ubinascii
 import _thread
 import time
-
+import machine
 # Variable de mise en Place
 IS_CONNECT = False
 REMOTE_MAC_ADDRESS = b'@"\xd8\xea\xd5\x10'
+
+C_MSG = "STOP"
 
 # Variable d'états
 CURRENT_MOVEMENT = "STOP"
@@ -31,8 +33,8 @@ ROUE_ARRIERE_DROIT = (machine.PWM(machine.Pin(2), freq=50), machine.PWM(machine.
 
 
 #              --------------------         Recheck
-step_pin = Pin(23, Pin.OUT)
-dir_pin = Pin(22, Pin.OUT)
+step_pin = machine.Pin(23, machine.Pin.OUT)
+dir_pin = machine.Pin(22, machine.Pin.OUT)
 
 PHARE = machine.Pin(13, mode=machine.Pin.OUT)
 
@@ -51,7 +53,7 @@ e.active(True)
 
 
 def main():
-    global CURRENT_MOVEMENT, IS_GIRO_ON, IS_CANON_SHOOTING, IS_PHARE_ON, IS_CANON_UPING, IS_CANON_DOWNING
+    global CURRENT_MOVEMENT, IS_GIRO_ON, IS_CANON_SHOOTING, IS_PHARE_ON, IS_CANON_UPING, IS_CANON_DOWNING, C_MSG
 
     _thread.start_new_thread(t_deplacements, (0,))
     _thread.start_new_thread(t_giro, (0,))
@@ -64,9 +66,32 @@ def main():
         print(f"!! WARNING !!\n\n{err}\n\n !! END WARNING !!")
 
     a_wait_connection()
+    _thread.start_new_thread(t_listen, (0,))
 
     while True:
         host, msg = e.recv()
+        print(msg.decode())
+        C_MSG = msg
+
+
+
+def a_wait_connection():
+    global IS_CONNECT
+    while not IS_CONNECT:
+        print("Waiting...")
+        e.send(REMOTE_MAC_ADDRESS, "PLEASE", True)
+        host, msg = e.recv(100)
+        if msg == b'CONNECTED' and host == REMOTE_MAC_ADDRESS:  # msg == None if timeout in recv()
+            IS_CONNECT = True
+            print("Remote Connected")
+        else:
+            #print(host + " not equal to " + REMOTE_MAC_ADDRESS)
+            print("Try new connection")
+
+def t_listen(i):
+    while True:
+        global C_MSG, CURRENT_MOVEMENT, IS_GIRO_ON, IS_CANON_DOWNING, IS_CANON_UPING
+        msg = C_MSG
         if msg == b'A':
             CURRENT_MOVEMENT = "A"
         elif msg == b'R':
@@ -93,7 +118,6 @@ def main():
             IS_GIRO_ON = False
         elif msg == b'GIRO ON':
             IS_GIRO_ON = True
-
         elif msg == b'UP Start':
             IS_CANON_DOWNING = False
             IS_CANON_UPING = True
@@ -104,37 +128,8 @@ def main():
             IS_CANON_DOWNING = True
         elif msg == b'DOWN Stop':
             IS_CANON_DOWNING = False
-
-
-
-        elif msg == b'TIR':
-            IS_CANON_SHOOTING = True
-        elif msg == b'STOP TIR':
-            IS_CANON_SHOOTING = False
-        elif msg == b'PHARE ON':
-            IS_PHARE_ON = True
-        elif msg == b'PHARE OFF':
-            IS_PHARE_ON = False
-
         else:
             pass
-
-
-
-
-def a_wait_connection():
-    global IS_CONNECT
-    while not IS_CONNECT:
-        print("Waiting...")
-        e.send(REMOTE_MAC_ADDRESS, "PLEASE", True)
-        host, msg = e.recv(100)
-        if msg == b'CONNECTED' and host == REMOTE_MAC_ADDRESS:  # msg == None if timeout in recv()
-            IS_CONNECT = True
-            print("Remote Connected")
-        else:
-            print(host + " not equal to " + REMOTE_MAC_ADDRESS)
-            print("Try new connection")
-
 
 def t_giro(i):
     while True:
@@ -176,11 +171,8 @@ def t_deplacements(i):
 
 
 def angle_to_steps(angle):
-    max_angle = 0
-    min_angle = 0
     if angle < 0 or angle > 360:
         raise ValueError("Angle must be between 0 and 360 degrees")
-    print(angle)
     return int(angle * 200 / 360)
 
 
@@ -188,9 +180,9 @@ def move_motor(steps, direction):
     dir_pin.value(direction)
     for i in range(steps):
         step_pin.value(1)
-        sleep(0.001)
+        time.sleep(0.001)
         step_pin.value(0)
-        sleep(0.001)
+        time.sleep(0.001)
 
 
 def t_canon(i):
@@ -200,9 +192,9 @@ def t_canon(i):
         #else:
         #    CANON.value(0)
         if IS_CANON_UPING:
-            move_motor(angle_to_steps(1), True)
+            move_motor(angle_to_steps(10), True)
         elif IS_CANON_DOWNING:
-            move_motor(angle_to_steps(1), False)
+            move_motor(angle_to_steps(10), False)
 
 def t_phare(i):
     while True:
