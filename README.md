@@ -18,13 +18,13 @@ V. [Model](#🔧-model)
 
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://choosealicense.com/licenses/mit/)
 [![Python logo](https://img.shields.io/badge/Language-Python-green
-)](https://www.php.net/)
+)](https://www.python.org)
 [![Fusion logo](https://img.shields.io/badge/CAO-Fusion360-orange
-)](https://www.php.net/)
+)](https://www.autodesk.fr/products/fusion-360/overview?term=1-YEAR&tab=subscription&plc=FSN)
 [![Kicad logo](https://img.shields.io/badge/CAO-Kicad-orange
-)](https://www.php.net/)
+)](https://www.kicad.org)
 [![EspNow logo](https://img.shields.io/badge/Communication-ESPNow-red
-)](https://www.php.net/)
+)](https://docs.micropython.org/en/latest/library/espnow.html)
 ## 📑 License
 
 [MIT](https://choosealicense.com/licenses/mit/)
